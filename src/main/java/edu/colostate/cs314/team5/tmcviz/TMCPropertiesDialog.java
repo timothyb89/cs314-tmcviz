@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.colostate.cs314.team5.tmcviz;
 
 import edu.colostate.cs314.team5.tmcviz.reflect.ReflectionSimulator;
@@ -11,6 +5,9 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -32,12 +29,16 @@ public class TMCPropertiesDialog extends JDialog {
 
 	private TMCFrame frame;
 	
+	private File lastDirectory;
+	
 	public TMCPropertiesDialog(TMCFrame frame) {
 		super(frame, true);
 		
 		this.frame = frame;
 		
 		initComponents();
+		
+		this.setLocationRelativeTo(frame);
 	}
 
 	/**
@@ -131,11 +132,41 @@ public class TMCPropertiesDialog extends JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+	private void scan(File f) {
+		if (!classField.getText().trim().isEmpty()) {
+			return;
+		}
+		
+		try (FileInputStream fis = new FileInputStream(f)) {
+			ZipInputStream in = new ZipInputStream(fis);
+			
+			ZipEntry e;
+			while ((e = in.getNextEntry()) != null) {
+				System.out.println(e.getName());
+				if (e.getName().equals("TMCSimulator.class")
+						|| e.getName().endsWith("/TMCSimulator.class")) {
+					String name = e.getName().substring(0, e.getName().length() - 6);
+					name = name.replace('/', '.');
+					
+					classField.setText(name);
+					
+					return;
+				}
+			}
+		} catch (Exception ex) {
+			log.warn("Unable to read jarfile", ex);
+		}
+	}
+	
     private void fileBrowseButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_fileBrowseButtonActionPerformed
-		JFileChooser chooser = new JFileChooser();
+		JFileChooser chooser = new JFileChooser(lastDirectory);
 		chooser.setFileFilter(new FileNameExtensionFilter("Jarfiles", new String[] { "jar" }));
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-			fileField.setText(chooser.getSelectedFile().getPath());
+			File f = chooser.getSelectedFile();
+			
+			lastDirectory = f.getParentFile();
+			fileField.setText(f.getPath());
+			scan(f);
 		}
     }//GEN-LAST:event_fileBrowseButtonActionPerformed
 

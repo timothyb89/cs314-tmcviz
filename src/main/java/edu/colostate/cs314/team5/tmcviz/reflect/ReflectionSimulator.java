@@ -102,7 +102,7 @@ public class ReflectionSimulator {
 	
 	public void createMapFromText(String text)
 			throws ReflectiveOperationException, IOException {
-		Path p = Files.createTempFile("tmcviz", "txt");
+		Path p = Files.createTempFile("tmcviz-map", "txt");
 
 		Files.write(p,
 				Arrays.asList(StringUtils.split(text, '\n')),
@@ -159,7 +159,7 @@ public class ReflectionSimulator {
 	
 	public void simulateFromText(String text)
 			throws ReflectiveOperationException, IOException {
-		Path p = Files.createTempFile("tmcviz-map", "txt");
+		Path p = Files.createTempFile("tmcviz-sim-", ".txt");
 		
 		Files.write(p,
 				Arrays.asList(StringUtils.split(text, '\n')),

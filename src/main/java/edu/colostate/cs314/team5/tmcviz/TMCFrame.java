@@ -52,6 +52,8 @@ public class TMCFrame extends javax.swing.JFrame {
 	@Getter @Setter
 	private ReflectionSimulator simulator;
 	
+	private File lastExecuteDirectory;
+	
 	/**
 	 * Creates new form TMCFrame
 	 */
@@ -279,7 +281,7 @@ public class TMCFrame extends javax.swing.JFrame {
 			return;
 		}
 		
-		JFileChooser chooser = new JFileChooser();
+		JFileChooser chooser = new JFileChooser(lastExecuteDirectory);
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			try {
 				File f = chooser.getSelectedFile();
@@ -295,6 +297,8 @@ public class TMCFrame extends javax.swing.JFrame {
 				mon.restore();
 				
 				outputPane.setText(mon.getOut());
+				
+				lastExecuteDirectory = f.getParentFile();
 			} catch (ReflectiveOperationException ex) {
 				error("Error executing simulator class", ex);
 			} catch (IOException ex) {
