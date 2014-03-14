@@ -6,26 +6,37 @@
 
 package edu.colostate.cs314.team5.tmcviz;
 
+import edu.colostate.cs314.team5.tmcviz.reflect.ReflectionSimulator;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.WindowConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author tim
  */
-public class TMCPropertiesDialog extends javax.swing.JDialog {
+@Slf4j
+public class TMCPropertiesDialog extends JDialog {
 
-	/**
-	 * Creates new form TMCPropertiesDialog
-	 */
-	public TMCPropertiesDialog(java.awt.Frame parent, boolean modal) {
-		super(parent, modal);
+	private TMCFrame frame;
+	
+	public TMCPropertiesDialog(TMCFrame frame) {
+		super(frame, true);
+		
+		this.frame = frame;
+		
 		initComponents();
 	}
 
@@ -38,38 +49,42 @@ public class TMCPropertiesDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new JLabel();
-        jTextField1 = new JTextField();
-        jButton1 = new JButton();
-        jLabel2 = new JLabel();
-        jButton2 = new JButton();
-        jButton3 = new JButton();
-        jTextField2 = new JTextField();
-        jScrollPane1 = new JScrollPane();
-        jTextArea1 = new JTextArea();
-        jLabel3 = new JLabel();
+        fileLabel = new JLabel();
+        fileField = new JTextField();
+        fileBrowseButton = new JButton();
+        classLabel = new JLabel();
+        saveButton = new JButton();
+        cancelButton = new JButton();
+        classField = new JTextField();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("TMCViz Properties");
+        setResizable(false);
 
-        jLabel1.setText("Jarfile:");
+        fileLabel.setText("Jarfile:");
 
-        jTextField1.setText("jTextField1");
+        fileBrowseButton.setText("Browse...");
+        fileBrowseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                fileBrowseButtonActionPerformed(evt);
+            }
+        });
 
-        jButton1.setText("Browse...");
+        classLabel.setText("TMCSimulator:");
 
-        jLabel2.setText("TMCSimulator:");
+        saveButton.setText("Save");
+        saveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Save");
-
-        jButton3.setText("Cancel");
-
-        jTextField2.setText("jTextField2");
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
-
-        jLabel3.setText("jLabel3");
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -79,23 +94,19 @@ public class TMCPropertiesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton3)
+                        .addComponent(cancelButton)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2))
+                        .addComponent(saveButton))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel3))
+                            .addComponent(classLabel)
+                            .addComponent(fileLabel))
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField1, GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
-                                    .addComponent(jTextField2))
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)))))
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                            .addComponent(fileField, GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                            .addComponent(classField))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fileBrowseButton)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -103,79 +114,60 @@ public class TMCPropertiesDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(fileLabel)
+                    .addComponent(fileField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fileBrowseButton))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
+                    .addComponent(classLabel)
+                    .addComponent(classField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(saveButton)
+                    .addComponent(cancelButton))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-		 * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(TMCPropertiesDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(TMCPropertiesDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(TMCPropertiesDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(TMCPropertiesDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    private void fileBrowseButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_fileBrowseButtonActionPerformed
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileFilter(new FileNameExtensionFilter("Jarfiles", new String[] { "jar" }));
+		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			fileField.setText(chooser.getSelectedFile().getPath());
 		}
-        //</editor-fold>
+    }//GEN-LAST:event_fileBrowseButtonActionPerformed
 
-		/* Create and display the dialog */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				TMCPropertiesDialog dialog = new TMCPropertiesDialog(new javax.swing.JFrame(), true);
-				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-					@Override
-					public void windowClosing(java.awt.event.WindowEvent e) {
-						System.exit(0);
-					}
-				});
-				dialog.setVisible(true);
-			}
-		});
-	}
+    private void saveButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        try {
+			File f = new File(fileField.getText());
+			String clazz = classField.getText();
+			ReflectionSimulator sim = new ReflectionSimulator(f, clazz);
+			frame.setSimulator(sim);
+			
+			dispose();
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(
+					this,
+					"Error loading TMCSimulator class: " + ex.getMessage(),
+					"Error",
+					JOptionPane.ERROR_MESSAGE);
+			log.error("Error loading TMCSimulator class", ex);
+		}
+    }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void cancelButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        dispose();
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton jButton1;
-    private JButton jButton2;
-    private JButton jButton3;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
-    private JScrollPane jScrollPane1;
-    private JTextArea jTextArea1;
-    private JTextField jTextField1;
-    private JTextField jTextField2;
+    private JButton cancelButton;
+    private JTextField classField;
+    private JLabel classLabel;
+    private JButton fileBrowseButton;
+    private JTextField fileField;
+    private JLabel fileLabel;
+    private JButton saveButton;
     // End of variables declaration//GEN-END:variables
 }

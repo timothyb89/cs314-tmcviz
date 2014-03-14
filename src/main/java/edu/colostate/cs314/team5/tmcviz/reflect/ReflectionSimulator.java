@@ -1,4 +1,4 @@
-package edu.colostate.cs314.team5.tmcviz;
+package edu.colostate.cs314.team5.tmcviz.reflect;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,7 +14,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Wraps an ideal TMCSimulator class via reflection.
@@ -22,6 +25,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class ReflectionSimulator {
+	
+	@Getter
+	private File jarFile;
+	
+	@Getter
+	private String className;
 	
 	private Class clazz;
 	private Object instance;
@@ -40,10 +49,13 @@ public class ReflectionSimulator {
 	
 	private Method simulateSingleLoop;
 	
-	public ReflectionSimulator(File jar, String className)
+	public ReflectionSimulator(File jarFile, String className)
 			throws MalformedURLException, ReflectiveOperationException {
+		this.jarFile = jarFile;
+		this.className = className;
+		
 		URLClassLoader loader = new URLClassLoader(new URL[] {
-			jar.toURI().toURL()
+			jarFile.toURI().toURL()
 		});
 		
 		clazz = loader.loadClass(className);
@@ -53,7 +65,7 @@ public class ReflectionSimulator {
 		
 		createMap = clazz.getMethod("createMap", String.class);
 		addNewRoute = clazz.getMethod("addNewRoute",
-				String.class, String.class, String.class, Integer.class);
+				String.class, String.class, String.class, Integer.TYPE);
 		removeRoute = clazz.getMethod("removeRoute", String.class);
 		displayStations = clazz.getMethod("displayStations");
 		displayRailmap = clazz.getMethod("displayRailmap");
@@ -61,11 +73,13 @@ public class ReflectionSimulator {
 		saveMap = clazz.getMethod("saveMap");
 		getStationStatus = clazz.getMethod("getStationStatus", String.class);
 		getRouteStatus = clazz.getMethod("getRouteStatus", String.class);
-		getLightStatus = clazz.getMethod("getLightStatus", String.class, Integer.class);
+		getLightStatus = clazz.getMethod("getLightStatus",
+				String.class, Integer.TYPE);
 		simulate = clazz.getMethod("simulate", String.class);
 		
 		try {
-			simulateSingleLoop = clazz.getMethod("simulateSingleLoop", String.class);
+			simulateSingleLoop = clazz.getMethod(
+					"simulateSingleLoop", String.class);
 		} catch (NoSuchMethodException ex) {
 			log.warn("simulateSingleLoop(String) not found in " + className
 					+ ", execute functionality disabled.");
@@ -90,7 +104,9 @@ public class ReflectionSimulator {
 			throws ReflectiveOperationException, IOException {
 		Path p = Files.createTempFile("tmcviz", "txt");
 
-		Files.write(p, Arrays.asList(text), Charset.defaultCharset());
+		Files.write(p,
+				Arrays.asList(StringUtils.split(text, '\n')),
+				Charset.defaultCharset());
 		
 		createMap(p.toString());
 	}
@@ -101,7 +117,8 @@ public class ReflectionSimulator {
 		addNewRoute.invoke(instance, routeId, startStation, endStation, segments);
 	}
 	
-	public void removeRoute(String routeId) throws ReflectiveOperationException {
+	public void removeRoute(String routeId)
+			throws ReflectiveOperationException {
 		removeRoute.invoke(instance, routeId);
 	}
 	
@@ -119,6 +136,41 @@ public class ReflectionSimulator {
 	
 	public void saveMap() throws ReflectiveOperationException {
 		saveMap.invoke(instance);
+	}
+	
+	public void getStationStatus(String stationId)
+			throws ReflectiveOperationException {
+		getStationStatus.invoke(instance, stationId);
+	}
+	
+	public void getRouteStatus(String routeId)
+			throws ReflectiveOperationException {
+		getRouteStatus.invoke(instance, routeId);
+	}
+	
+	public void getLightStatus(String routeId, int segmentIndex)
+			throws ReflectiveOperationException {
+		getLightStatus.invoke(instance, routeId, segmentIndex);
+	}
+	
+	public void simulate(String file) throws ReflectiveOperationException {
+		simulate.invoke(instance, file);
+	}
+	
+	public void simulateFromText(String text)
+			throws ReflectiveOperationException, IOException {
+		Path p = Files.createTempFile("tmcviz-map", "txt");
+		
+		Files.write(p,
+				Arrays.asList(StringUtils.split(text, '\n')),
+				Charset.defaultCharset());
+		
+		simulate(p.toString());
+	}
+	
+	public void simulateSingleLoop(String loop)
+			throws ReflectiveOperationException {
+		simulate.invoke(instance, loop);
 	}
 	
 }

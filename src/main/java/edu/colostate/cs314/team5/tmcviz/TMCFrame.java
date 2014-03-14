@@ -1,6 +1,8 @@
 package edu.colostate.cs314.team5.tmcviz;
 
 import com.mxgraph.swing.mxGraphComponent;
+import edu.colostate.cs314.team5.tmcviz.reflect.ReflectionSimulator;
+import edu.colostate.cs314.team5.tmcviz.reflect.SimpleOutputMonitor;
 import edu.colostate.cs314.team5.tmcviz.sim.RailMap;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -9,10 +11,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -27,15 +32,25 @@ import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author tim
  */
+@Slf4j
 public class TMCFrame extends javax.swing.JFrame {
 
 	private mxGraphComponent graphView;
 	private TMCGraph graph;
+	
+	private String currentMap;
+	
+	@Getter @Setter
+	private ReflectionSimulator simulator;
 	
 	/**
 	 * Creates new form TMCFrame
@@ -57,6 +72,17 @@ public class TMCFrame extends javax.swing.JFrame {
 		mapEditButtonActionPerformed(null);
 	}
 
+	private void error(String text) {
+		JOptionPane.showMessageDialog(
+				this, text, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+	
+	private void error(String text, Throwable t) {
+		log.error(text, t);
+		
+		error(text + t.getMessage());
+	}
+	
 	/**
 	 * This method is called from within the constructor to initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is always
@@ -148,6 +174,11 @@ public class TMCFrame extends javax.swing.JFrame {
         execSingleField.setEnabled(false);
 
         execFileButton.setText("From File...");
+        execFileButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                execFileButtonActionPerformed(evt);
+            }
+        });
 
         execSingleButton.setText("Execute");
         execSingleButton.setEnabled(false);
@@ -190,6 +221,11 @@ public class TMCFrame extends javax.swing.JFrame {
 
         propertiesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
         propertiesItem.setText("Properties...");
+        propertiesItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                propertiesItemActionPerformed(evt);
+            }
+        });
         editMenu.add(propertiesItem);
 
         menuBar.add(editMenu);
@@ -220,12 +256,9 @@ public class TMCFrame extends javax.swing.JFrame {
         try {
 			RailMap map = RailMap.parse(mapEditField.getText());
 			graph.setMap(map);
+			currentMap = mapEditField.getText();
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(
-					this,
-					"Invalid railmap - check your syntax.\n" + ex.getMessage(),
-					"Invalid railmap",
-					JOptionPane.ERROR_MESSAGE);
+			error("Invalid railmap - check your syntax.\n" + ex.getMessage());
 		}
     }//GEN-LAST:event_mapEditButtonActionPerformed
 
@@ -234,6 +267,41 @@ public class TMCFrame extends javax.swing.JFrame {
 			mapEditButtonActionPerformed(null);
 		}
     }//GEN-LAST:event_mapEditFieldKeyReleased
+
+    private void propertiesItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_propertiesItemActionPerformed
+        TMCPropertiesDialog dialog = new TMCPropertiesDialog(this);
+		dialog.setVisible(true);
+    }//GEN-LAST:event_propertiesItemActionPerformed
+
+    private void execFileButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_execFileButtonActionPerformed
+        if (simulator == null) {
+			error("You must load a simulator class first.");
+			return;
+		}
+		
+		JFileChooser chooser = new JFileChooser();
+		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			try {
+				File f = chooser.getSelectedFile();
+				
+				log.info("Executing simulator with input file: " + f);
+				
+				simulator.reset();
+				simulator.createMapFromText(currentMap);
+				
+				SimpleOutputMonitor mon = new SimpleOutputMonitor();
+				mon.start();
+				simulator.simulate(f.getPath());
+				mon.restore();
+				
+				outputPane.setText(mon.getOut());
+			} catch (ReflectiveOperationException ex) {
+				error("Error executing simulator class", ex);
+			} catch (IOException ex) {
+				error("Error creating simulator file", ex);
+			}
+		}
+    }//GEN-LAST:event_execFileButtonActionPerformed
 
 	/**
 	 * @param args the command line arguments
