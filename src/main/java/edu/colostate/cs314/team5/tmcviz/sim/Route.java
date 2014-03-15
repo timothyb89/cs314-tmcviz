@@ -5,24 +5,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import lombok.Data;
+import lombok.Getter;
 import lombok.ToString;
 
 /**
  *
  * @author tim
  */
-@Data
 @ToString
 public class Route implements Serializable {
 	
 	public static final Pattern PATTERN = Pattern.compile("\\b\\d{4}\\b");
 	
-	private final String id;
-	private final Station start;
-	private final Station end;
-	private final int segmentCount;
+	@Getter private final String id;
+	@Getter private final Station start;
+	@Getter private final Station end;
+	@Getter private final int segmentCount;
 	
-	private List<Segment> segments;
+	@Getter private List<Segment> segments;
 	
 	public Route(String id, Station start, Station end, int segmentCount) {
 		this.id = id;

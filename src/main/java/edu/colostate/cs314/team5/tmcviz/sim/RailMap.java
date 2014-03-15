@@ -94,7 +94,7 @@ public class RailMap implements Serializable {
 	public Segment getSegment(String segmentId) {
 		Matcher m = Segment.PATTERN.matcher(segmentId);
 		if (m.matches()) {
-			return getSegment(m.group(1), Integer.parseInt(m.group(2)));
+			return getSegment(m.group(1), Integer.parseInt(m.group(2)) - 1);
 		} else {
 			log.warn("Invalid segment id: " + segmentId);
 			return null;

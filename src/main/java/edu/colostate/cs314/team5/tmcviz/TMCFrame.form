@@ -75,7 +75,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="vertSplit" pref="600" max="32767" attributes="0"/>
+              <Component id="vertSplit" pref="669" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -122,10 +122,11 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="mapEditField" pref="505" max="32767" attributes="0"/>
+                          <Component id="mapEditField" pref="572" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="mapEditButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
+                          <Component id="mapResetButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -136,6 +137,7 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="mapEditButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="mapEditField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="mapResetButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -146,15 +148,25 @@
                 <Component class="javax.swing.JButton" name="mapEditButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Set Map"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mapEditButtonActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JTextField" name="mapEditField">
+                  <Properties>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
                   <Events>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="mapEditFieldKeyReleased"/>
                   </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="mapResetButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Reset"/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
                 </Component>
               </SubComponents>
             </Container>
@@ -172,6 +184,28 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
             </Container>
+            <Component class="javax.swing.JSlider" name="loopSlider">
+              <Properties>
+                <Property name="majorTickSpacing" type="int" value="2"/>
+                <Property name="maximum" type="int" value="10"/>
+                <Property name="minorTickSpacing" type="int" value="1"/>
+                <Property name="orientation" type="int" value="1"/>
+                <Property name="paintLabels" type="boolean" value="true"/>
+                <Property name="paintTicks" type="boolean" value="true"/>
+                <Property name="snapToTicks" type="boolean" value="true"/>
+                <Property name="toolTipText" type="java.lang.String" value="Shown simulation loop"/>
+                <Property name="value" type="int" value="0"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="loopSliderStateChanged"/>
+              </Events>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                  <BorderConstraints direction="East"/>
+                </Constraint>
+              </Constraints>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="ioContainer">
@@ -194,7 +228,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="outputPaneScroll" pref="596" max="32767" attributes="0"/>
+                  <Component id="outputPaneScroll" pref="717" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="execSingleField" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -214,7 +248,7 @@
                           <Component id="execSingleButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="outputPaneScroll" pref="76" max="32767" attributes="0"/>
+                      <Component id="outputPaneScroll" pref="136" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -233,6 +267,7 @@
                 <Component class="javax.swing.JEditorPane" name="outputPane">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[112, 100]"/>
                     </Property>
@@ -242,12 +277,14 @@
             </Container>
             <Component class="javax.swing.JTextField" name="execSingleField">
               <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="Requires simulateSingleLoop(String) defined in TMCSimulator"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="execFileButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="From File..."/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="execFileButtonActionPerformed"/>
@@ -256,6 +293,7 @@
             <Component class="javax.swing.JButton" name="execSingleButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Execute"/>
+                <Property name="toolTipText" type="java.lang.String" value="Requires simulateSingleLoop(String) defined in TMCSimulator"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>

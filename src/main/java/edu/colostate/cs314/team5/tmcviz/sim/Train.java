@@ -10,7 +10,6 @@ import lombok.ToString;
  * @author tim
  */
 @Data
-@ToString
 public class Train {
 	
 	public static final Pattern PATTERN = Pattern.compile("\\b\\d{3}\\b");
@@ -25,6 +24,16 @@ public class Train {
 	public Train(String id, TrainContainer location) {
 		this.id = id;
 		this.location = location;
+	}
+	
+	public String getStyle() {
+		// todo: stopped flag
+		return "defaultVertex;shape=rounded;fillColor=red";
+	}
+	
+	@Override
+	public String toString() {
+		return id;
 	}
 	
 }

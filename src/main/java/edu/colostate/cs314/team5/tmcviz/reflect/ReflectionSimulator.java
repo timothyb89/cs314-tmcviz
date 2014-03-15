@@ -170,7 +170,11 @@ public class ReflectionSimulator {
 	
 	public void simulateSingleLoop(String loop)
 			throws ReflectiveOperationException {
-		simulate.invoke(instance, loop);
+		simulateSingleLoop.invoke(instance, loop);
+	}
+	
+	public boolean singleSimulationSupported() {
+		return simulateSingleLoop != null;
 	}
 	
 }

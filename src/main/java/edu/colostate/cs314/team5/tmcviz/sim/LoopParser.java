@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -21,6 +22,7 @@ public class LoopParser {
 	private String currentLine;
 	private List<String> result;
 	
+	@Getter
 	private Map<Integer, RailMap> loops;
 	
 	public LoopParser(RailMap map) {
@@ -29,13 +31,14 @@ public class LoopParser {
 		loops = new HashMap<>();
 	}
 	
-	public RailMap parse(String[] lines) {
+	public void parse(String[] lines) {
 		working = map.copy();
 		
 		for (String line : lines) {
 			currentLine = line;
 			
 			if (findAll(pi("loop"), pi("\\d+"))) {
+				System.out.println("started loop " + result.get(1));
 				working = working.copy();
 				working.setLoop(Integer.parseInt(result.get(1)));
 				loops.put(working.getLoop(), working);
@@ -50,12 +53,41 @@ public class LoopParser {
 						result.get(1), result.get(3), result.get(5));
 			}
 		}
-		
-		return working;
 	}
 	
-	public RailMap parseLoop(String text) {
-		return parse(StringUtils.split(text, "\n"));
+	public void parseLoop(String text) {
+		parse(StringUtils.split(text, "\n"));
+	}
+	
+	public RailMap getLoop(int index) {
+		return loops.get(index);
+	}
+	
+	public int getMinIndex() {
+		int min = -1;
+		for (int i : loops.keySet()) {
+			System.out.println(i);
+			if (min == -1 || i < min) {
+				min = i;
+			}
+		}
+		
+		System.out.println("min = " + min);
+		
+		return min;
+	}
+	
+	public int getMaxIndex() {
+		int max = -1;
+		
+		for (int i : loops.keySet()) {
+			if (i > max) {
+				max = i;
+			}
+		}
+		
+		System.out.println("max = " + max);
+		return max;
 	}
 	
 	private List<String> findAll(String text, Pattern... patterns) {
@@ -111,15 +143,15 @@ public class LoopParser {
 						+ "]");
 		LoopParser p = new LoopParser(map);
 		
-		RailMap newMap = p.parse(new String[] {
-			"The light in 0000.3 has changed to red",
-			"Train 300 was moved from 0002.2 to BOLD",
-			"Train 200 was moved from LGMT to 0002.1",
-			"Train 211 was moved from 0005.1 to 0005.2",
-		});
+		//RailMap newMap = p.parse(new String[] {
+		//	"The light in 0000.3 has changed to red",
+		//	"Train 300 was moved from 0002.2 to BOLD",
+		//	"Train 200 was moved from LGMT to 0002.1",
+		//	"Train 211 was moved from 0005.1 to 0005.2",
+		//});
 		
-		System.out.println(map.getSegment("0000.3").getStatus());
-		System.out.println(newMap.getSegment("0000.3").getStatus());
+		//System.out.println(map.getSegment("0000.3").getStatus());
+		//System.out.println(newMap.getSegment("0000.3").getStatus());
 	}
 	
 }

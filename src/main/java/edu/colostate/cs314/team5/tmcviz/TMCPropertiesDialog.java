@@ -29,8 +29,6 @@ public class TMCPropertiesDialog extends JDialog {
 
 	private TMCFrame frame;
 	
-	private File lastDirectory;
-	
 	public TMCPropertiesDialog(TMCFrame frame) {
 		super(frame, true);
 		
@@ -159,12 +157,12 @@ public class TMCPropertiesDialog extends JDialog {
 	}
 	
     private void fileBrowseButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_fileBrowseButtonActionPerformed
-		JFileChooser chooser = new JFileChooser(lastDirectory);
+		JFileChooser chooser = new JFileChooser(TMCFrame.lastDirectory);
 		chooser.setFileFilter(new FileNameExtensionFilter("Jarfiles", new String[] { "jar" }));
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File f = chooser.getSelectedFile();
 			
-			lastDirectory = f.getParentFile();
+			TMCFrame.lastDirectory = f.getParentFile();
 			fileField.setText(f.getPath());
 			scan(f);
 		}
@@ -176,6 +174,7 @@ public class TMCPropertiesDialog extends JDialog {
 			String clazz = classField.getText();
 			ReflectionSimulator sim = new ReflectionSimulator(f, clazz);
 			frame.setSimulator(sim);
+			frame.configured();
 			
 			dispose();
 		} catch (Exception ex) {

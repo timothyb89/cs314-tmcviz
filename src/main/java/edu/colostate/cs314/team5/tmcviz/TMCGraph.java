@@ -7,6 +7,7 @@ import edu.colostate.cs314.team5.tmcviz.sim.RailMap;
 import edu.colostate.cs314.team5.tmcviz.sim.Route;
 import edu.colostate.cs314.team5.tmcviz.sim.Segment;
 import edu.colostate.cs314.team5.tmcviz.sim.Station;
+import edu.colostate.cs314.team5.tmcviz.sim.Train;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,12 +23,12 @@ public class TMCGraph extends mxGraph {
 	private RailMap map;
 	
 	private Map<Station, mxCell> stationCells;
-	private List<mxCell> segmentCells;
+	private Map<Segment, mxCell> segmentCells;
 	private List<Route> dirtyRoutes;
 	
 	public TMCGraph() {
 		stationCells = new HashMap<>();
-		segmentCells = new ArrayList<>();
+		segmentCells = new HashMap<>();
 		dirtyRoutes = new ArrayList<>();
 		
 		setCellsDeletable(true);
@@ -73,7 +74,7 @@ public class TMCGraph extends mxGraph {
 	
 	public void setMap(RailMap map) {
 		removeCells(stationCells.values().toArray(), true);
-		removeCells(segmentCells.toArray(), true);
+		removeCells(segmentCells.values().toArray(), true);
 		
 		//removeCellsFromParent();
 		//removeCells();
@@ -120,7 +121,7 @@ public class TMCGraph extends mxGraph {
 			int offsetY = 0;
 			
 			if (isDirty(r)) {
-				offsetX += 25;
+				offsetX += 30;
 				offsetY += 25;
 			}
 			dirtyRoutes.add(r);
@@ -136,8 +137,8 @@ public class TMCGraph extends mxGraph {
 				mxCell segmentCell = (mxCell) insertVertex(
 						parent, null, s,
 						p.x - 20 + offsetX, p.y - 15 + offsetY,
-						40, 30);
-				segmentCells.add(segmentCell);
+						40, 30, s.getStyle());
+				segmentCells.put(s, segmentCell);
 				
 				if (prev != null) {
 					insertEdge(parent, null, null, prev, segmentCell);
@@ -157,6 +158,10 @@ public class TMCGraph extends mxGraph {
 			if (prev != null) {
 				insertEdge(parent, null, null, prev, b);
 			}
+		}
+		
+		for (Train t : map.getTrains()) {
+			
 		}
 		
 		getModel().endUpdate();

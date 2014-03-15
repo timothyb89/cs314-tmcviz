@@ -3,6 +3,7 @@ package edu.colostate.cs314.team5.tmcviz;
 import com.mxgraph.swing.mxGraphComponent;
 import edu.colostate.cs314.team5.tmcviz.reflect.ReflectionSimulator;
 import edu.colostate.cs314.team5.tmcviz.reflect.SimpleOutputMonitor;
+import edu.colostate.cs314.team5.tmcviz.sim.LoopParser;
 import edu.colostate.cs314.team5.tmcviz.sim.RailMap;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,6 +26,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -32,6 +34,8 @@ import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,11 +52,13 @@ public class TMCFrame extends javax.swing.JFrame {
 	private TMCGraph graph;
 	
 	private String currentMap;
+	private RailMap map;
+	private LoopParser loopParser;
 	
 	@Getter @Setter
 	private ReflectionSimulator simulator;
 	
-	private File lastExecuteDirectory;
+	public static File lastDirectory;
 	
 	/**
 	 * Creates new form TMCFrame
@@ -72,6 +78,11 @@ public class TMCFrame extends javax.swing.JFrame {
 						+ "{0005:BOLD;FTCL:5}"
 						+ "]");
 		mapEditButtonActionPerformed(null);
+		
+		setVisible(true);
+		
+		TMCPropertiesDialog dialog = new TMCPropertiesDialog(this);
+		dialog.setVisible(true);
 	}
 
 	private void error(String text) {
@@ -99,7 +110,9 @@ public class TMCFrame extends javax.swing.JFrame {
         buttonContainer = new JPanel();
         mapEditButton = new JButton();
         mapEditField = new JTextField();
+        mapResetButton = new JButton();
         graphContainer = new JPanel();
+        loopSlider = new JSlider();
         ioContainer = new JPanel();
         outputPaneScroll = new JScrollPane();
         outputPane = new JEditorPane();
@@ -124,27 +137,33 @@ public class TMCFrame extends javax.swing.JFrame {
         buttonContainer.setMaximumSize(new Dimension(32767, 200));
 
         mapEditButton.setText("Set Map");
+        mapEditButton.setEnabled(false);
         mapEditButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 mapEditButtonActionPerformed(evt);
             }
         });
 
+        mapEditField.setEnabled(false);
         mapEditField.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent evt) {
                 mapEditFieldKeyReleased(evt);
             }
         });
 
+        mapResetButton.setText("Reset");
+        mapResetButton.setEnabled(false);
+
         GroupLayout buttonContainerLayout = new GroupLayout(buttonContainer);
         buttonContainer.setLayout(buttonContainerLayout);
         buttonContainerLayout.setHorizontalGroup(
             buttonContainerLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(GroupLayout.Alignment.TRAILING, buttonContainerLayout.createSequentialGroup()
-                .addComponent(mapEditField, GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
+                .addComponent(mapEditField, GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(mapEditButton)
-                .addContainerGap())
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mapResetButton))
         );
         buttonContainerLayout.setVerticalGroup(
             buttonContainerLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -152,7 +171,8 @@ public class TMCFrame extends javax.swing.JFrame {
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(buttonContainerLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(mapEditButton)
-                    .addComponent(mapEditField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mapEditField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(mapResetButton))
                 .addContainerGap())
         );
 
@@ -162,6 +182,23 @@ public class TMCFrame extends javax.swing.JFrame {
         graphContainer.setLayout(new BorderLayout());
         metaContainer.add(graphContainer, BorderLayout.CENTER);
 
+        loopSlider.setMajorTickSpacing(2);
+        loopSlider.setMaximum(10);
+        loopSlider.setMinorTickSpacing(1);
+        loopSlider.setOrientation(JSlider.VERTICAL);
+        loopSlider.setPaintLabels(true);
+        loopSlider.setPaintTicks(true);
+        loopSlider.setSnapToTicks(true);
+        loopSlider.setToolTipText("Shown simulation loop");
+        loopSlider.setValue(0);
+        loopSlider.setEnabled(false);
+        loopSlider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                loopSliderStateChanged(evt);
+            }
+        });
+        metaContainer.add(loopSlider, BorderLayout.EAST);
+
         vertSplit.setTopComponent(metaContainer);
 
         ioContainer.setBorder(BorderFactory.createTitledBorder("Output"));
@@ -170,12 +207,15 @@ public class TMCFrame extends javax.swing.JFrame {
         outputPaneScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         outputPane.setEditable(false);
+        outputPane.setEnabled(false);
         outputPane.setMinimumSize(new Dimension(112, 100));
         outputPaneScroll.setViewportView(outputPane);
 
+        execSingleField.setToolTipText("Requires simulateSingleLoop(String) defined in TMCSimulator");
         execSingleField.setEnabled(false);
 
         execFileButton.setText("From File...");
+        execFileButton.setEnabled(false);
         execFileButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 execFileButtonActionPerformed(evt);
@@ -183,13 +223,14 @@ public class TMCFrame extends javax.swing.JFrame {
         });
 
         execSingleButton.setText("Execute");
+        execSingleButton.setToolTipText("Requires simulateSingleLoop(String) defined in TMCSimulator");
         execSingleButton.setEnabled(false);
 
         GroupLayout ioContainerLayout = new GroupLayout(ioContainer);
         ioContainer.setLayout(ioContainerLayout);
         ioContainerLayout.setHorizontalGroup(
             ioContainerLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(outputPaneScroll, GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE)
+            .addComponent(outputPaneScroll, GroupLayout.DEFAULT_SIZE, 717, Short.MAX_VALUE)
             .addGroup(ioContainerLayout.createSequentialGroup()
                 .addComponent(execSingleField)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -206,7 +247,7 @@ public class TMCFrame extends javax.swing.JFrame {
                     .addComponent(execFileButton)
                     .addComponent(execSingleButton))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(outputPaneScroll, GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
+                .addComponent(outputPaneScroll, GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
         );
 
         vertSplit.setBottomComponent(ioContainer);
@@ -247,7 +288,7 @@ public class TMCFrame extends javax.swing.JFrame {
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(vertSplit, GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+                .addComponent(vertSplit, GroupLayout.DEFAULT_SIZE, 669, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -256,7 +297,8 @@ public class TMCFrame extends javax.swing.JFrame {
 
     private void mapEditButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_mapEditButtonActionPerformed
         try {
-			RailMap map = RailMap.parse(mapEditField.getText());
+			map = RailMap.parse(mapEditField.getText());
+			loopParser = new LoopParser(map);
 			graph.setMap(map);
 			currentMap = mapEditField.getText();
 		} catch (Exception ex) {
@@ -281,7 +323,7 @@ public class TMCFrame extends javax.swing.JFrame {
 			return;
 		}
 		
-		JFileChooser chooser = new JFileChooser(lastExecuteDirectory);
+		JFileChooser chooser = new JFileChooser(lastDirectory);
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			try {
 				File f = chooser.getSelectedFile();
@@ -298,7 +340,13 @@ public class TMCFrame extends javax.swing.JFrame {
 				
 				outputPane.setText(mon.getOut());
 				
-				lastExecuteDirectory = f.getParentFile();
+				lastDirectory = f.getParentFile();
+				
+				loopParser.parseLoop(mon.getOut());
+				loopSlider.setEnabled(true);
+				loopSlider.setValue(loopParser.getMinIndex());
+				loopSlider.setMinimum(loopParser.getMinIndex());
+				loopSlider.setMaximum(loopParser.getMaxIndex());
 			} catch (ReflectiveOperationException ex) {
 				error("Error executing simulator class", ex);
 			} catch (IOException ex) {
@@ -307,6 +355,29 @@ public class TMCFrame extends javax.swing.JFrame {
 		}
     }//GEN-LAST:event_execFileButtonActionPerformed
 
+    private void loopSliderStateChanged(ChangeEvent evt) {//GEN-FIRST:event_loopSliderStateChanged
+        RailMap temp = loopParser.getLoop(loopSlider.getValue());
+		graph.setMap(temp);
+    }//GEN-LAST:event_loopSliderStateChanged
+
+	public void configured() {
+		mapEditField.setEnabled(true);
+		mapEditButton.setEnabled(true);
+		
+		execFileButton.setEnabled(true);
+		outputPane.setEnabled(true);
+		
+		if (simulator.singleSimulationSupported()) {
+			execSingleField.setEnabled(true);
+			execSingleButton.setEnabled(true);
+		}
+	}
+	
+	public void resetSimulation() {
+		loopSlider.setEnabled(false);
+		graph.setMap(map);
+	}
+	
 	/**
 	 * @param args the command line arguments
 	 */
@@ -337,7 +408,7 @@ public class TMCFrame extends javax.swing.JFrame {
 		/* Create and display the form */
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				new TMCFrame().setVisible(true);
+				new TMCFrame();
 			}
 		});
 	}
@@ -351,8 +422,10 @@ public class TMCFrame extends javax.swing.JFrame {
     private JMenu fileMenu;
     private JPanel graphContainer;
     private JPanel ioContainer;
+    private JSlider loopSlider;
     private JButton mapEditButton;
     private JTextField mapEditField;
+    private JButton mapResetButton;
     private JMenuBar menuBar;
     private JPanel metaContainer;
     private JEditorPane outputPane;
