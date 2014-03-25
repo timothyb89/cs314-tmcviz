@@ -37,12 +37,12 @@ Pitfalls and Problems
 
 Other things to note:
 * A new TMCSimulator instance is created for every execution of "From file..."
-* What's displayed is the final state of each turn. This won't show anything if you make multiple changes to lights, etc on a single turn.
+* What's displayed is the final state of each turn. This won't show anything if you make multiple changes to lights, etc on a single turn. Similarly, nothing will usually be shown on the first turn when no actions have been taken.
 
 Upcoming Features
 -----------------
-* Show trains (!). The beta currently available in Releases is an alpha / tech demo, and only displays light state. More specifically, train positions are kept track of, but not displayed (yet).
 * Individual method execution - see what specific commands do to your railmap
+* Visualize more: routes open / closed, ...
 
 Enhancements
 ------------
