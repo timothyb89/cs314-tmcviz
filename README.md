@@ -17,7 +17,9 @@ Quickstart
 
 How it Works
 ------------
-Your TMCSimulator class is dynamically loaded and wrapped. When a simulation file is executed, the output is captured and parsed, and the result is displayed in the "current state" panel.
+<a href="https://raw.github.com/timothyb89/cs314-tmcviz/master/screenshot.png"><img src="https://raw.github.com/timothyb89/cs314-tmcviz/master/screenshot-small.png"></a>
+
+Your TMCSimulator class is dynamically loaded and wrapped. When a simulation file is executed, the output is captured and parsed, and the result is displayed in the "current state" panel. Stations are shown as blue squares, with green ellipses (or red, if closed) representing segments along a route. Trains are shown as yellow circles arranged around the segment or station they're currently at.
 
 This only attempts to display "facts" about your system; that is, no guesses are made as to what your output really means. If your system moves two trains onto the same platform / segment / etc, it will be displayed like that. Similarly, anything not printed is not displayed - trains that reach their destination won't be removed from the display since there isn't a defined message for this.
 
