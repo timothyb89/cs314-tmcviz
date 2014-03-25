@@ -12,4 +12,6 @@ public interface TrainContainer {
 			"\\b([A-Z]{4}|\\d{4}\\.\\d+|\\d{3})\\b"
 	);
 	
+	public String getId();
+	
 }

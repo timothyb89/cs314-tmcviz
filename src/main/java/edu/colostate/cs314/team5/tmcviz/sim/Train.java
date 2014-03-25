@@ -1,5 +1,6 @@
 package edu.colostate.cs314.team5.tmcviz.sim;
 
+import java.io.Serializable;
 import java.util.regex.Pattern;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.ToString;
  * @author tim
  */
 @Data
-public class Train {
+public class Train implements Serializable {
 	
 	public static final Pattern PATTERN = Pattern.compile("\\b\\d{3}\\b");
 	
@@ -28,7 +29,7 @@ public class Train {
 	
 	public String getStyle() {
 		// todo: stopped flag
-		return "defaultVertex;shape=rounded;fillColor=red";
+		return "shape=ellipse;fillColor=yellow";
 	}
 	
 	@Override

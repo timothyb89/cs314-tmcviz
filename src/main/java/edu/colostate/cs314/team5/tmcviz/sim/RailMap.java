@@ -150,7 +150,6 @@ public class RailMap implements Serializable {
 		Train train = getOrCreateTrain(trainId);
 		TrainContainer c = getContainer(containerId);
 		
-		
 		if (train == null || c == null) {
 			log.warn("Unknown train or container: "
 					+ trainId + " / " + containerId);
@@ -213,7 +212,7 @@ public class RailMap implements Serializable {
 		}
 		
 		for (Train t : getTrains()) {
-			copy.addTrain(t.getId());
+			copy.addTrain(t.getId(), copy.getContainer(t.getLocation().getId()));
 		}
 		
 		return copy;

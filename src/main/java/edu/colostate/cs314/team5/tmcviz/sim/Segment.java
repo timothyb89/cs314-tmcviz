@@ -23,6 +23,11 @@ public class Segment implements Serializable, TrainContainer {
 	private LightStatus status = LightStatus.GREEN;
 	
 	@Override
+	public String getId() {
+		return toString();
+	}
+	
+	@Override
 	public String toString() {
 		return String.format("%s.%d", parent.getId(), (index + 1));
 	}

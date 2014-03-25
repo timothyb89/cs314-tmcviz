@@ -7,6 +7,7 @@ import edu.colostate.cs314.team5.tmcviz.sim.LoopParser;
 import edu.colostate.cs314.team5.tmcviz.sim.RailMap;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -406,7 +407,7 @@ public class TMCFrame extends javax.swing.JFrame {
         //</editor-fold>
 
 		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
+		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				new TMCFrame();
 			}

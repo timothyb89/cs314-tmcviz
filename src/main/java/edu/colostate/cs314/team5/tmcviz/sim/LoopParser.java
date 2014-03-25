@@ -49,8 +49,9 @@ public class LoopParser {
 					TrainContainer.COMBINED_PATTERN, pi("to"),
 					TrainContainer.COMBINED_PATTERN)) {
 				// train 123 ... moved ... 1234 ... to ... 1234
-				System.out.printf("train %s moved from %s to %s\n",
-						result.get(1), result.get(3), result.get(5));
+				working.moveTrain(result.get(1), result.get(5));
+				//System.out.printf("train %s moved from %s to %s\n",
+				//		result.get(1), result.get(3), result.get(5));
 			}
 		}
 	}
