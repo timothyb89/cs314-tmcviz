@@ -34,7 +34,7 @@ public class Segment implements Serializable, TrainContainer {
 	
 	public String getStyle() {
 		switch (status) {
-			case RED: return "defaultVertex;fillColor=red";
+			case RED: return "shape=ellipse;fillColor=red";
 			case GREEN: return "shape=ellipse;fillColor=lightgreen";
 			default: return null;
 		}

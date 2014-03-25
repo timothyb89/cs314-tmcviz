@@ -185,9 +185,9 @@ public class TMCGraph extends mxGraph {
 				double angleStart = stationAngles.get(sa);
 				double angleEnd = stationAngles.get(sb);
 
-				System.out.printf("%s [ %.2f ] -> %s [ %.2f ]\n",
-						sa.toString(), Math.toDegrees(angleStart),
-						sb.toString(), Math.toDegrees(angleEnd));
+				//System.out.printf("%s [ %.2f ] -> %s [ %.2f ]\n",
+				//		sa.toString(), Math.toDegrees(angleStart),
+				//		sb.toString(), Math.toDegrees(angleEnd));
 				
 				while (angleStart > angleEnd) {
 					angleEnd += 2 * Math.PI;
@@ -217,7 +217,7 @@ public class TMCGraph extends mxGraph {
 					mxCell segmentCell = (mxCell) insertVertex(
 							parent, null, s,
 							(int) segmentX, (int) segmentY,
-							40, 30, s.getStyle());
+							45, 35, s.getStyle());
 					segmentCells.put(s, segmentCell);
 					
 					if (prev != null) {
@@ -260,7 +260,7 @@ public class TMCGraph extends mxGraph {
 					mxCell segmentCell = (mxCell) insertVertex(
 							parent, null, s,
 							p.x - 20 + offsetX, p.y - 15 + offsetY,
-							40, 30, s.getStyle());
+							45, 35, s.getStyle());
 					segmentCells.put(s, segmentCell);
 
 					if (prev != null) {
@@ -320,7 +320,7 @@ public class TMCGraph extends mxGraph {
 				mxCell trainCell = (mxCell) insertVertex(
 						parent, null, t,
 						x, y,
-						25, 25,
+						30, 30,
 						t.getStyle());
 				trainCells.put(t, trainCell);
 			}
