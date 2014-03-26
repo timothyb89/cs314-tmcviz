@@ -94,7 +94,7 @@ public class TMCFrame extends javax.swing.JFrame {
 	private void error(String text, Throwable t) {
 		log.error(text, t);
 		
-		error(text + t.getMessage());
+		error(text + ": " + t.getMessage());
 	}
 	
 	/**
@@ -154,6 +154,11 @@ public class TMCFrame extends javax.swing.JFrame {
 
         mapResetButton.setText("Reset");
         mapResetButton.setEnabled(false);
+        mapResetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                mapResetButtonActionPerformed(evt);
+            }
+        });
 
         GroupLayout buttonContainerLayout = new GroupLayout(buttonContainer);
         buttonContainer.setLayout(buttonContainerLayout);
@@ -302,6 +307,11 @@ public class TMCFrame extends javax.swing.JFrame {
 			loopParser = new LoopParser(map);
 			graph.setMap(map);
 			currentMap = mapEditField.getText();
+			
+			loopSlider.setEnabled(false);
+			outputPane.setText("");
+			mapResetButton.setEnabled(false);
+			// todo: rerun simulation (if any)?
 		} catch (Exception ex) {
 			error("Invalid railmap - check your syntax.\n" + ex.getMessage());
 		}
@@ -348,6 +358,8 @@ public class TMCFrame extends javax.swing.JFrame {
 				loopSlider.setValue(loopParser.getMinIndex());
 				loopSlider.setMinimum(loopParser.getMinIndex());
 				loopSlider.setMaximum(loopParser.getMaxIndex());
+				
+				mapResetButton.setEnabled(true);
 			} catch (ReflectiveOperationException ex) {
 				error("Error executing simulator class", ex);
 			} catch (IOException ex) {
@@ -360,6 +372,13 @@ public class TMCFrame extends javax.swing.JFrame {
         RailMap temp = loopParser.getLoop(loopSlider.getValue());
 		graph.setMap(temp);
     }//GEN-LAST:event_loopSliderStateChanged
+
+    private void mapResetButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_mapResetButtonActionPerformed
+        graph.setMap(map);
+		outputPane.setText("");
+		loopSlider.setEnabled(false);
+		mapResetButton.setEnabled(false);
+    }//GEN-LAST:event_mapResetButtonActionPerformed
 
 	public void configured() {
 		mapEditField.setEnabled(true);
