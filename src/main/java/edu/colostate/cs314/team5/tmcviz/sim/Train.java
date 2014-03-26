@@ -3,7 +3,9 @@ package edu.colostate.cs314.team5.tmcviz.sim;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -18,6 +20,8 @@ public class Train implements Serializable {
 	private final String id;
 	private TrainContainer location;
 
+	@Getter @Setter private boolean stopped;
+	
 	public Train(String id) {
 		this.id = id;
 	}
@@ -26,10 +30,20 @@ public class Train implements Serializable {
 		this.id = id;
 		this.location = location;
 	}
+
+	public Train(String id, TrainContainer location, boolean stopped) {
+		this.id = id;
+		this.location = location;
+		this.stopped = stopped;
+	}
 	
 	public String getStyle() {
-		// todo: stopped flag
-		return "shape=ellipse;fillColor=yellow";
+		System.out.println("debug: stopped: " + stopped);
+		
+		String shape = "ellipse";
+		String color = stopped ? "red" : "yellow";
+		
+		return String.format("shape=%s;fillColor=%s", shape, color);
 	}
 	
 	@Override

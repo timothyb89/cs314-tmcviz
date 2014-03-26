@@ -33,11 +33,14 @@ public class Segment implements Serializable, TrainContainer {
 	}
 	
 	public String getStyle() {
-		switch (status) {
-			case RED: return "shape=ellipse;fillColor=red";
-			case GREEN: return "shape=ellipse;fillColor=lightgreen";
-			default: return null;
+		String shape = parent.isClosed() ? "square" : "ellipse";
+		
+		String fillColor = "lightgreen";
+		if (status == LightStatus.RED) {
+			fillColor = "red";
 		}
+		
+		return String.format("shape=%s;fillColor=%s", shape, fillColor);
 	}
 	
 	public enum LightStatus {

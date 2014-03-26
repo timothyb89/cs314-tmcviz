@@ -38,11 +38,12 @@ public class LoopParser {
 			currentLine = line;
 			
 			if (findAll(pi("loop"), pi("\\d+"))) {
-				System.out.println("started loop " + result.get(1));
+				// loop N
 				working = working.copy();
 				working.setLoop(Integer.parseInt(result.get(1)));
 				loops.put(working.getLoop(), working);
 			} else if (findAll(pi("light"), Segment.PATTERN, pi("(red|green)"))) {
+				// ... light ... 1234.5 ... red/green
 				working.setLight(result.get(1), result.get(2));
 			} else if (findAll(
 					pi("train"), Train.PATTERN, pi("moved"),
@@ -50,8 +51,18 @@ public class LoopParser {
 					TrainContainer.COMBINED_PATTERN)) {
 				// train 123 ... moved ... 1234 ... to ... 1234
 				working.moveTrain(result.get(1), result.get(5));
-				//System.out.printf("train %s moved from %s to %s\n",
-				//		result.get(1), result.get(3), result.get(5));
+			} else if (findAll(
+					pi("train"), Train.PATTERN, pi("stopped"),
+					pi("engineer"), TrainContainer.COMBINED_PATTERN)) {
+				// train 123 ... stopped ... engineer ... 1234.5
+				System.out.println("debug: train stopped:" + result.get(1));
+				working.stopTrain(result.get(1));
+			} else if (findAll(
+					pi("train"), Train.PATTERN, pi("restarted"),
+					pi("engineer"), TrainContainer.COMBINED_PATTERN)) {
+				// train 123 ... restarted ... engineer ... 1234.5
+				System.out.println("debug: train restarted: " + result.get(1));
+				working.restartTrain(result.get(1));
 			}
 		}
 	}
@@ -67,13 +78,10 @@ public class LoopParser {
 	public int getMinIndex() {
 		int min = -1;
 		for (int i : loops.keySet()) {
-			System.out.println(i);
 			if (min == -1 || i < min) {
 				min = i;
 			}
 		}
-		
-		System.out.println("min = " + min);
 		
 		return min;
 	}
@@ -87,14 +95,13 @@ public class LoopParser {
 			}
 		}
 		
-		System.out.println("max = " + max);
 		return max;
 	}
 	
 	private List<String> findAll(String text, Pattern... patterns) {
 		List<String> ret = new ArrayList<>();
 		
-		//System.out.println("text:    " + text);
+		//System.out.println("\ntext:    " + text);
 		
 		Matcher m = null;
 		for (Pattern p : patterns) {

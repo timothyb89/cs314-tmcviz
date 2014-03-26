@@ -183,7 +183,7 @@ public class TMCFrame extends javax.swing.JFrame {
         graphContainer.setLayout(new BorderLayout());
         metaContainer.add(graphContainer, BorderLayout.CENTER);
 
-        loopSlider.setMajorTickSpacing(2);
+        loopSlider.setMajorTickSpacing(1);
         loopSlider.setMaximum(10);
         loopSlider.setMinorTickSpacing(1);
         loopSlider.setOrientation(JSlider.VERTICAL);

@@ -140,7 +140,6 @@ public class TMCPropertiesDialog extends JDialog {
 			
 			ZipEntry e;
 			while ((e = in.getNextEntry()) != null) {
-				System.out.println(e.getName());
 				if (e.getName().equals("TMCSimulator.class")
 						|| e.getName().endsWith("/TMCSimulator.class")) {
 					String name = e.getName().substring(0, e.getName().length() - 6);

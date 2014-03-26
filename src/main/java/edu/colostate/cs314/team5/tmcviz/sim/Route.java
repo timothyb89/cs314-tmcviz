@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -22,7 +23,9 @@ public class Route implements Serializable {
 	@Getter private final Station end;
 	@Getter private final int segmentCount;
 	
-	@Getter private List<Segment> segments;
+	@Getter private final List<Segment> segments;
+	
+	@Getter @Setter private boolean closed;
 	
 	public Route(String id, Station start, Station end, int segmentCount) {
 		this.id = id;
@@ -34,6 +37,8 @@ public class Route implements Serializable {
 		for (int i = 0; i < segmentCount; i++) {
 			segments.add(new Segment(this, i));
 		}
+		
+		closed = false;
 	}
 	
 	public Segment getSegment(int index) {

@@ -73,6 +73,7 @@ public class TMCGraph extends mxGraph {
 	
 	private boolean isAdjacent(Station a, Station b) {
 		if (orderedStations.size() < 2) {
+			System.out.println("size too small");
 			return false;
 		}
 		
@@ -132,6 +133,8 @@ public class TMCGraph extends mxGraph {
 	}
 	
 	public void setMap(RailMap map) {
+		System.out.println("setMap()");
+		
 		removeCells(stationCells.values().toArray(), true);
 		removeCells(segmentCells.values().toArray(), true);
 		removeCells(trainCells.values().toArray(), true);
@@ -142,6 +145,7 @@ public class TMCGraph extends mxGraph {
 		segmentCells.clear();
 		trainCells.clear();
 		
+		orderedStations.clear();
 		dirtyRoutes.clear();
 		dirtyAdjacentRoutes.clear();
 		
@@ -174,6 +178,7 @@ public class TMCGraph extends mxGraph {
 			int offsetX = 0;
 			int offsetY = 0;
 			
+			System.out.println("adjacent: " + isAdjacent(sa, sb) + "; dirty: " + isDirtyAdjacent(r));
 			if (isAdjacent(sa, sb) && !isDirtyAdjacent(r)) {
 				// attempt to align around the circle
 				// only adjacent stations will have routes positioned this way
@@ -192,16 +197,6 @@ public class TMCGraph extends mxGraph {
 				while (angleStart > angleEnd) {
 					angleEnd += 2 * Math.PI;
 				}
-				
-				//if (angleStart + angleEnd > 2 * Math.PI) {
-					// wraps around the circle, reduce the large one by
-					// 1 full rotation
-				//	if (angleStart > angleEnd) {
-				//		angleStart -= 2 * Math.PI;
-				//	} else {
-				//		angleEnd -= 2 * Math.PI;
-				//	}
-				//}
 				
 				mxCell first = null;
 				mxCell prev = null;
@@ -298,13 +293,16 @@ public class TMCGraph extends mxGraph {
 			list.add(t);
 		}
 		
-		double trainRadius = 25;
+		double trainRadius = 30;
 		
 		// for each cell with trains, place new train cells (and try to arrange
 		// them sanely)
 		for (mxCell cell : trainsForCell.keySet()) {
-			double cx = cell.getGeometry().getCenterX();
-			double cy = cell.getGeometry().getCenterY();
+			// mxGraph center points are weird, normalize both the "x/y" and
+			// "center x/y"
+			mxGeometry geom = cell.getGeometry();
+			double cx = (geom.getX() + geom.getCenterX()) / 2;
+			double cy = (geom.getY() + geom.getCenterY()) / 2;
 			
 			List<Train> trains = trainsForCell.get(cell);
 			

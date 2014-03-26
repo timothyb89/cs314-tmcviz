@@ -146,6 +146,10 @@ public class RailMap implements Serializable {
 		addTrain(new Train(trainId, location));
 	}
 	
+	public void addTrain(String trainId, TrainContainer location, boolean stopped) {
+		addTrain(new Train(trainId, location, stopped));
+	}
+	
 	public void moveTrain(String trainId, String containerId) {
 		Train train = getOrCreateTrain(trainId);
 		TrainContainer c = getContainer(containerId);
@@ -156,6 +160,30 @@ public class RailMap implements Serializable {
 		} else {
 			train.setLocation(c);
 		}
+	}
+	
+	public void stopTrain(String trainId) {
+		Train train = getTrain(trainId);
+		if (train == null) {
+			log.warn("Unable to stop train; unknown id: {}", trainId);
+			return;
+		}
+		
+		System.out.println("debug: stopped " + train);
+		
+		train.setStopped(true);
+	}
+	
+	public void restartTrain(String trainId) {
+		Train train = getTrain(trainId);
+		if (train == null) {
+			log.warn("Unable to restart train; unknown id: {}", trainId);
+			return;
+		}
+		
+		System.out.println("debug: restarted " + train);
+		
+		train.setStopped(false);
 	}
 	
 	public void setLight(Segment segment, String status) {
@@ -212,7 +240,10 @@ public class RailMap implements Serializable {
 		}
 		
 		for (Train t : getTrains()) {
-			copy.addTrain(t.getId(), copy.getContainer(t.getLocation().getId()));
+			copy.addTrain(
+					t.getId(),
+					copy.getContainer(t.getLocation().getId()),
+					t.isStopped());
 		}
 		
 		return copy;
