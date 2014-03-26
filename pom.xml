@@ -4,7 +4,7 @@
 
 	<groupId>edu.colostate.cs314.team5</groupId>
 	<artifactId>tmcviz</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>tmcviz</name>
