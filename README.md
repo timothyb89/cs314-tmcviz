@@ -6,8 +6,8 @@ A visualizer and debugger for TMCSimulator.
 Quickstart
 ----------
 
-1. Download a .jar from the releases tab, or clone the repository and run `mvn install`
-2. Run the jar: `java -jar tmcviz-1.0-SNAPSHOT-with-dependencies.jar`
+1. Download the latest .jar from the [releases tab](https://github.com/timothyb89/cs314-tmcviz/releases), or clone the repository and run `mvn install`
+2. Run the jar: `java -jar tmcviz-X.X-SNAPSHOT-with-dependencies.jar`
 3. Browse to a compiled jar containing your code
 4. Enter a fully-qualified classname for your TMCSimulator
    * This should be detected automatically.
@@ -55,4 +55,4 @@ public void simulateSingleLoop(String text) {
 }
 ```
 
-If found, the textbox in the "Output" section will be enabled, allowing you to enter individual commands. Entered lines will be queued and an empty line will submit a loop. **Note: currently only partially implemented**
+If found, the textbox in the "Output" section will be enabled, allowing you to enter individual commands. Entered lines will be queued and an empty line will submit a loop. **Note: not implemented yet.**
