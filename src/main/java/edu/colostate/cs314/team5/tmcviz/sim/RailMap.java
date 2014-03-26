@@ -169,8 +169,6 @@ public class RailMap implements Serializable {
 			return;
 		}
 		
-		System.out.println("debug: stopped " + train);
-		
 		train.setStopped(true);
 	}
 	
@@ -180,8 +178,6 @@ public class RailMap implements Serializable {
 			log.warn("Unable to restart train; unknown id: {}", trainId);
 			return;
 		}
-		
-		System.out.println("debug: restarted " + train);
 		
 		train.setStopped(false);
 	}

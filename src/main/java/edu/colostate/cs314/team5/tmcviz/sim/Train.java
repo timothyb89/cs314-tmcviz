@@ -38,8 +38,6 @@ public class Train implements Serializable {
 	}
 	
 	public String getStyle() {
-		System.out.println("debug: stopped: " + stopped);
-		
 		String shape = "ellipse";
 		String color = stopped ? "red" : "yellow";
 		

@@ -55,13 +55,11 @@ public class LoopParser {
 					pi("train"), Train.PATTERN, pi("stopped"),
 					pi("engineer"), TrainContainer.COMBINED_PATTERN)) {
 				// train 123 ... stopped ... engineer ... 1234.5
-				System.out.println("debug: train stopped:" + result.get(1));
 				working.stopTrain(result.get(1));
 			} else if (findAll(
 					pi("train"), Train.PATTERN, pi("restarted"),
 					pi("engineer"), TrainContainer.COMBINED_PATTERN)) {
 				// train 123 ... restarted ... engineer ... 1234.5
-				System.out.println("debug: train restarted: " + result.get(1));
 				working.restartTrain(result.get(1));
 			}
 		}
