@@ -231,28 +231,25 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="outputPaneScroll" pref="717" max="32767" attributes="0"/>
-                  <Group type="102" attributes="0">
-                      <Component id="execSingleField" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="outputPaneScroll" pref="637" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="execSingleButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="execFileButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="execFileButton" max="32767" attributes="0"/>
+                          <Component id="consoleButton" pref="84" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="execSingleField" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="execFileButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="execSingleButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="execFileButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="outputPaneScroll" pref="136" max="32767" attributes="0"/>
+                      <Component id="consoleButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="49" max="32767" attributes="0"/>
                   </Group>
+                  <Component id="outputPaneScroll" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -278,27 +275,23 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JTextField" name="execSingleField">
-              <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="Requires simulateSingleLoop(String) defined in TMCSimulator"/>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JButton" name="execFileButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="From File..."/>
+                <Property name="text" type="java.lang.String" value="Run File"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="execFileButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="execSingleButton">
+            <Component class="javax.swing.JButton" name="consoleButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Execute"/>
-                <Property name="toolTipText" type="java.lang.String" value="Requires simulateSingleLoop(String) defined in TMCSimulator"/>
+                <Property name="text" type="java.lang.String" value="Console"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="consoleButtonActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

@@ -108,6 +108,20 @@ public class RailMap implements Serializable {
 	public void addRoute(String id, Station start, Station end, int segments) {
 		routes.add(new Route(id, start, end, segments));
 	}
+	
+	public void removeRoute(Route route) {
+		routes.remove(route);
+	}
+	
+	public void removeRoute(String routeId) {
+		Route r = getRoute(routeId);
+		if (r == null) {
+			log.warn("Unable to remove route; not found: {}", routeId);
+			return;
+		}
+		
+		removeRoute(r);
+	}
 
 	public List<Train> getTrains() {
 		return trains;
@@ -243,6 +257,18 @@ public class RailMap implements Serializable {
 		}
 		
 		return copy;
+	}
+	
+	public String serialize() {
+		StringBuilder sb = new StringBuilder();
+		for (Route route : routes) {
+			sb.append(String.format("{%s:%s;%s:%d}",
+					route.getId(),
+					route.getStart().getId(), route.getEnd().getId(),
+					route.getSegmentCount()));
+		}
+		
+		return String.format("%s[%s]", id, sb);
 	}
 	
 	public static RailMap parse(String map) {
