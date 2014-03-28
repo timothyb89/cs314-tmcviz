@@ -4,6 +4,7 @@ import edu.colostate.cs314.team5.tmcviz.TMCFrame;
 import edu.colostate.cs314.team5.tmcviz.sim.Station;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 /**
  * A simulator instance to be passed to the groovy shell. Mainly wraps
@@ -20,6 +21,11 @@ public class EmbeddedSimulator {
 		this.simulator = simulator;
 	}
 
+	public void reload() throws MalformedURLException, ReflectiveOperationException {
+		simulator.reload();
+		frame.resetSimulation();
+	}
+	
 	public void reset() throws ReflectiveOperationException {
 		simulator.reset();
 		frame.resetSimulation();

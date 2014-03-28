@@ -32,8 +32,8 @@ public class ReflectionSimulator {
 	@Getter
 	private String className;
 	
-	private Class clazz;
-	private Object instance;
+	@Getter private Class clazz;
+	@Getter private Object instance;
 	
 	private Method createMap;
 	private Method addNewRoute;
@@ -50,6 +50,12 @@ public class ReflectionSimulator {
 	private Method simulateSingleLoop;
 	
 	public ReflectionSimulator(File jarFile, String className)
+			throws MalformedURLException, ReflectiveOperationException {
+		
+		load(jarFile, className);
+	}
+	
+	public final void load(File jarFile, String className)
 			throws MalformedURLException, ReflectiveOperationException {
 		this.jarFile = jarFile;
 		this.className = className;
@@ -84,6 +90,11 @@ public class ReflectionSimulator {
 			log.warn("simulateSingleLoop(String) not found in " + className
 					+ ", execute functionality disabled.");
 		}
+	}
+	
+	public final void reload()
+			throws MalformedURLException, ReflectiveOperationException {
+		load(this.jarFile, this.className);
 	}
 	
 	/**

@@ -375,6 +375,9 @@ public class TMCFrame extends javax.swing.JFrame {
     private void consoleButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_consoleButtonActionPerformed
 		Console console = new Console();
 		console.setVariable("sim", new EmbeddedSimulator(this, simulator));
+		console.setVariable("internalSim", simulator);
+		console.setVariable("realSim", simulator.getInstance());
+		console.setVariable("frame", this);
 		console.run();
     }//GEN-LAST:event_consoleButtonActionPerformed
 

@@ -23,7 +23,7 @@ public class LoopParser {
 	private List<String> result;
 	
 	@Getter
-	private Map<Integer, RailMap> loops;
+	private final Map<Integer, RailMap> loops;
 	
 	public LoopParser(RailMap map) {
 		this.map = map;
@@ -32,6 +32,7 @@ public class LoopParser {
 	}
 	
 	public void parse(String[] lines) {
+		loops.clear();
 		working = map.copy();
 		
 		for (String line : lines) {
